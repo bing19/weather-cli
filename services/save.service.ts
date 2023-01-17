@@ -1,6 +1,10 @@
 import { homedir } from "os"
 import path from "path"
-import { promises } from 'fs'
+import { PathLike, promises } from 'fs'
+
+type ResultType = {
+    [key: string]: any
+};
 
 const filePath = path.join(homedir(), 'wether-data.json')
 
@@ -9,8 +13,10 @@ export const TOKEN_DICTIONARY = {
     city: 'city'
 }
 
-export const saveKeyValue = async (key, value) => {
-    let data = {}
+
+
+export const saveKeyValue = async (key: any, value: String) => {
+    let data: ResultType = {}
 
     if (await isExist(filePath)) {
         // Тут может быть ошибка при чтении файла
@@ -19,7 +25,7 @@ export const saveKeyValue = async (key, value) => {
         })
 
         // Здесь может неверно пройти парсинг, если в файле что-то не то
-        data = JSON.parse(file)
+        data = JSON.parse(file.toString())
     }
 
     data[key] = value
@@ -28,14 +34,14 @@ export const saveKeyValue = async (key, value) => {
     await promises.writeFile(filePath, JSON.stringify(data))
 }
 
-export const getValue = async (key) => {
+export const getValue = async (key: any) => {
 
     if (await isExist(filePath)) {
         // Тут может быть ошибка при чтении файла
         const file = await promises.readFile(filePath)
 
         // Здесь может неверно пройти парсинг, если в файле что-то не то
-        const data = JSON.parse(file)
+        const data = JSON.parse(file.toString())
 
         return data[key]
     }
@@ -43,7 +49,7 @@ export const getValue = async (key) => {
     return undefined
 }
 
-const isExist = async (path) => {
+const isExist = async (path: PathLike) => {
     try{
         await promises.stat(path)
         return true
